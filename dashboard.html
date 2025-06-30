@@ -84,7 +84,7 @@
   function isRestricted(label) {
     if (role === "masteruser") return false;
     if (["lawdept", "homedept", "collector"].includes(role)) {
-      return ["Add New Court Details", "User Management"].includes(label);
+      return ["User Management"].includes(label);
     }
     if (role === "boss") {
       return ["Add New Court Details", "User Management", "View Court Details", "Update Court Details"].includes(label);
