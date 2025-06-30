@@ -15,7 +15,7 @@ function renderHeader() {
       align-items: center;
       position: sticky;
     ">
-      <div style="font-size:1.2rem; font-weight:bold;">Law Officers Management System</div>
+      <div style="font-size:1.2rem; font-weight:bold;">Law Officer's Tenure Monitoring System</div>
       <div style="text-align: right;">
         <button onclick="goHome()" style="margin-right:10px; background:#457b9d; color:white; border:none; padding:6px 12px; border-radius:5px;">🏠 Home</button>
         <span style="margin-right:15px;">👤 ${userName} (${role})</span>
