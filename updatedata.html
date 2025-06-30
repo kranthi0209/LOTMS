@@ -45,8 +45,26 @@
     .multi-select-checkboxes label:hover { background: #edf2f4 }
     .multi-select-checkboxes input { margin-right: 8px }
     #results table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); table-layout: fixed }
+    #results tbody tr:nth-child(even) {
+  background-color: #f1f5f9; /* Light grayish-blue */
+}
+
+#results tbody tr:nth-child(odd) {
+  background-color: #ffffff; /* White */
+}
     #results th, #results td { border: 1px solid #dee2e6; padding: 12px; text-align: center; vertical-align: middle }
     #results th { background: linear-gradient(to right, #1d3557, #457b9d); color: white; position: sticky; top: 0; }
+    #results th:nth-child(1) { width: 10px; }/* Sl. No */
+    #results th:nth-child(2) { width: 70px; }/* Department  */
+    #results th:nth-child(3) { width: 80px; }/* Judicial Dist */
+    #results th:nth-child(4) { width: 80px; }/* Revenue Dist */
+    #results th:nth-child(5) { width: 140px; }/* Court Name */
+    #results th:nth-child(6) { width: 140px; }/* Designation */
+    #results th:nth-child(7) { width: 40px; }/* Status */
+    #results th:nth-child(8) { width: 120px; }/* Officer Name */
+    #results th:nth-child(9) { width: 80px; }/* Panel Status */
+    #results th:nth-child(10) { width: 50px; }/* Govt */
+    #results th:nth-child(11) { width: 150px; }/* Actions */
     #results td button { padding: 6px 10px; border-radius: 6px; font-weight: bold; }
     .view { background: #00b4d8; color: white }
     .edit { background: #06d6a0; color: white }
@@ -245,9 +263,9 @@
       ['Department','Judicial District','Revenue District','Name of the Court','Designation','Status of the post','Name of the Officer','Panel Status','Appointed During']
         .forEach(f=> html += `<td>${r[f]||''}</td>`);
       html += `<td>
-        <button class="view" onclick="viewData(${i})">🔍</button>
-        <button class="edit" onclick="editData(${i})">✏️</button>
-        <button class="delete" onclick="deleteData(${i})">🗑️</button>
+        <button class="view" onclick="viewData(${i})">🔍View</button>
+        <button class="edit" onclick="editData(${i})">✏️Edit</button>
+        <button class="delete" onclick="deleteData(${i})">🗑️Delete</button>
       </td>`;
       html += '</tr>';
     });
@@ -273,9 +291,7 @@
   }
 
   function closeModal(){ document.getElementById('viewModal').style.display = 'none'; }
-
    
-
   function exportCSV() {
     if (!currentData.length) return alert("⚠️ No data to export.");
     const csvRows = [];
