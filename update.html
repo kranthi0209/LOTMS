@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Manage Master Data</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #f1faee, #e8f0f2);
+      padding: 30px;
+      animation: fadeIn 1s ease-in;
+    }
+    h1 {
+      text-align: center;
+      color: #1d3557;
+      margin-bottom: 30px;
+      font-size: 2.2em;
+      animation: slideDown 0.7s ease-out;
+    }
+    @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+    @keyframes slideDown { from { transform: translateY(-30px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+    @keyframes zoomIn { from { transform: scale(0.8); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+    @keyframes bounceIn {
+      0% { transform: scale(0.6); opacity: 0 }
+      60% { transform: scale(1.1); opacity: 1 }
+      80% { transform: scale(0.95) }
+      100% { transform: scale(1) }
+    }
+    .filter-block { margin-bottom: 20px; padding: 20px; background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+    .filter-block-title { font-weight: bold; color: #1d3557; margin-bottom: 10px; font-size: 1.4em; }
+    .filter-content { display: flex; flex-wrap: wrap; gap: 20px; }
+    .filters-container { display: flex; flex-wrap: wrap; gap: 16px; flex: 1; padding-right: 10px; }
+    .filter-buttons { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center; margin-bottom: 20px; }
+    .filter-buttons button, .filter-buttons input { padding: 10px; font-size: 16px; border-radius: 8px; border: none; cursor: pointer; }
+    #resetBtn { background: #dc3545; color: white }
+    #resetBtn:hover { background: #c82333 }
+    #summaryBtn { background: #1c5314; color: white }
+    #summaryBtn:hover { background: #16324f }
+    #searchBox { width: 300px; border: 1px solid #ccc; }
+    .multi-select { position: relative; }
+    .label-container { font-weight: bold; padding: 8px 12px; border-radius: 8px; background: #1d3557; color: #f5f0f0; cursor: pointer }
+    .multi-select-checkboxes { display: none; position: absolute; top: 100%; left: 0; background: white; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); max-height: 200px; overflow-y: auto; z-index: 1000; padding: 8px; min-width: 240px }
+    .multi-select.active .multi-select-checkboxes { display: block }
+    .multi-select-checkboxes label { display: block; padding: 6px 10px; cursor: pointer }
+    .multi-select-checkboxes label:hover { background: #edf2f4 }
+    .multi-select-checkboxes input { margin-right: 8px }
+    #results table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); table-layout: fixed }
+    #results tbody tr:nth-child(even) {
+  background-color: #f1f5f9; /* Light grayish-blue */
+}
+
+#results tbody tr:nth-child(odd) {
+  background-color: #ffffff; /* White */
+}
+    #results th, #results td { border: 1px solid #dee2e6; padding: 12px; text-align: center; vertical-align: middle }
+    #results th { background: linear-gradient(to right, #1d3557, #457b9d); color: white; position: sticky; top: 0; }
+    #results th:nth-child(1) { width: 10px; }/* Sl. No */
+    #results th:nth-child(2) { width: 70px; }/* Department  */
+    #results th:nth-child(3) { width: 80px; }/* Judicial Dist */
+    #results th:nth-child(4) { width: 80px; }/* Revenue Dist */
+    #results th:nth-child(5) { width: 140px; }/* Court Name */
+    #results th:nth-child(6) { width: 140px; }/* Designation */
+    #results th:nth-child(7) { width: 40px; }/* Status */
+    #results th:nth-child(8) { width: 120px; }/* Officer Name */
+    #results th:nth-child(9) { width: 80px; }/* Panel Status */
+    #results th:nth-child(10) { width: 50px; }/* Govt */
+    #results th:nth-child(11) { width: 150px; }/* Actions */
+    #results td button { padding: 6px 10px; border-radius: 6px; font-weight: bold; }
+    .view { background: #00b4d8; color: white }
+    .edit { background: #06d6a0; color: white }
+    .delete { background: #e63946; color: white }
+    #filterSummaryPopup { display:none; width:360px; background:#fff; border-radius:16px; box-shadow:0 8px 24px rgba(0,0,0,0.25); padding:20px; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); }
+    #filterSummaryPopup h3 { margin-top:0; font-size:20px; text-align:center; color:#1d3557; margin-bottom:10px }
+    #filterSummaryPopup table { width:100%; border-collapse:collapse; }
+    #filterSummaryPopup th, #filterSummaryPopup td { padding:8px; border-bottom:1px solid #ddd }
+    #filterSummaryPopup th { background:#1d3557; color:white }
+    .close-btn { display:block; margin:10px auto 0; padding:10px 20px; background:#1d3557; color:white; border:none; border-radius:8px; cursor:pointer }
+    #loadingOverlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; animation:fadeIn 0.5s }
+    .loadingPopup { background:#fff; color:#1d3557; padding:30px 50px; border-radius:20px; box-shadow:0 8px 24px rgba(0,0,0,0.2); font-size:1.4em; font-weight:bold; animation:bounceIn 0.6s }
+    .modal { display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.5); animation:fadeIn 0.3s; }
+    .modal-content {
+      background: linear-gradient(to bottom right, #fff, #f1f5f9);
+      margin:5% auto;
+      padding:30px;
+      border-radius:16px;
+      width:80%;
+      max-width:700px;
+      max-height:80vh; /* allow scrolling */
+      overflow-y:scroll;   /* allow scrolling */
+      box-shadow:0 12px 30px rgba(0,0,0,0.25);
+      animation:zoomIn 0.3s;
+      position:relative;
+    }
+    .modal-content h2 { margin-top:0; font-size:1.8em; text-align:center; color:#1d3557; margin-bottom:20px; border-bottom:2px solid #457b9d; padding-bottom:10px }
+    .close-modal { position:absolute; top:12px; right:20px; font-size:28px; font-weight:bold; color:#444; cursor:pointer }
+    .close-modal:hover { color:#000 }
+    #modalBody table { width:100%; border-collapse:collapse; font-size:15px }
+    #modalBody th, #modalBody td { padding:10px; border-bottom:1px solid #ddd }
+    #modalBody tr:nth-child(even) { background:#f8f9fa }
+    #modalBody tr:hover td { background:#e3f2fd }
+    #modalBody th { background:#1d3557; color:white; width:35% }
+    .edit-section { background:#fff; border-radius:12px; margin-bottom:20px; padding-bottom: 5px; box-shadow:0 6px 12px rgba(0,0,0,0.1); border:1px solid #dee2e6 }
+    .edit-section-title { background:linear-gradient(to right, #6a4c93, #9f86c0); color:white; font-weight:bold; padding:12px 20px; font-size:1.1em }
+    .edit-section .form-row { display:flex; align-items:center; padding:10px 20px; flex-wrap:wrap }
+    .edit-section .form-row label { flex:1 1 30%; font-weight:600; margin-bottom:5px }
+    .edit-section .form-row input, .edit-section .form-row select { flex:1 1 65%; padding:8px; font-size:14px; margin-bottom:10px; border:1px solid #ccc; border-radius:8px }
+  </style>
+</head>
+<body>
+  <script src="shared-header.js"></script>
+  <h1>Manage Master Data</h1>
+  <div class="filter-block">
+    <div class="filter-block-title">Filters</div>
+    <div class="filter-content">
+      <div id="filters" class="filters-container"></div>
+    </div>
+  </div>
+  <div class="filter-buttons">
+    <button id="resetBtn" onclick="resetFilters()">🔄 Reset</button>
+    <button id="summaryBtn" onclick="showFilterSummary()">📊 Summary</button>
+    <input type="text" id="searchBox" placeholder="Search here…" onkeyup="searchTable()" />
+    
+  </div>
+  <div id="results"></div>
+  <div id="filterSummaryPopup">
+    <h3>Filter Summary</h3>
+    <div id="filterSummary"></div>
+    <button class="close-btn" onclick="document.getElementById('filterSummaryPopup').style.display='none'">Close</button>
+  </div>
+  <div id="loadingOverlay"><div class="loadingPopup">Loading data...</div></div>
+
+  <!-- View Modal -->
+  <div id="viewModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal()">&times;</span>
+      <h2>📄 Record Details</h2>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+  
+  <script>
+  let masterData = [], currentData = [], currentSort = {key:'', direction:'asc'};
+  const filterKeys = ['Department','Judicial District','Revenue District','Designation','Status of the post','Panel Status','Appointed During'];
+  const dropdownFields = {
+    "Status of the post": ["Filled","Vacant"],
+    "Panel Status": ["Not Applicable","Panel Awaited","Panel Received","No Need to fill"],
+    "Community": ["OC","BC","SC","ST","No Data","Not Applicable"],
+    "Gender": ["Male","Female","Other","Not Applicable"]
+  };
+
+  function getDropdownOptions(field) {
+    const norm = field.trim().toLowerCase();
+    for (const key in dropdownFields)
+      if (key.trim().toLowerCase() === norm) return dropdownFields[key];
+    return null;
+  }
+
+  function init() {
+    fetch('https://script.google.com/macros/s/AKfycbxpht4ZNJwvWR1vq9GxYFbahaura6Q5hWvdCrTYjHd-Fx5gkOiwd9laHRg5AZ7noYTn_A/exec?action=getMasterData')
+      .then(r=>r.json())
+      .then(data=>{
+        masterData = data;
+        currentData = [...data];
+        document.getElementById('loadingOverlay').style.display='none';
+        createFilterUI();
+        applySorting();
+      });
+  }
+
+  function createFilterUI() {
+    const container = document.getElementById('filters');
+    container.innerHTML = '';
+    filterKeys.forEach(key => {
+      const options = [...new Set(masterData.map(r=>r[key]).filter(Boolean))].sort();
+      const div = document.createElement('div');
+      div.className = 'multi-select';
+      div.innerHTML = `
+        <div class="label-container">${key}</div>
+        <div class="multi-select-checkboxes">
+          ${options.map(o=>`<label><input type="checkbox" data-key="${key}" value="${o}"> ${o}</label>`).join('')}
+        </div>`;
+      div.querySelector('.label-container').onclick = () => div.classList.toggle('active');
+      div.querySelectorAll('input').forEach(cb => cb.onchange = onFilterChange);
+      container.appendChild(div);
+    });
+    document.addEventListener('click', e=>{
+      document.querySelectorAll('.multi-select').forEach(ms=>{
+        if (!ms.contains(e.target)) ms.classList.remove('active');
+      });
+    });
+  }
+
+  function getSelectedFilters(){
+    const sel = {};
+    filterKeys.forEach(k=>{
+      sel[k] = Array.from(document.querySelectorAll(`input[data-key="${k}"]:checked`)).map(cb=>cb.value);
+    });
+    return sel;
+  }
+
+  function onFilterChange(){
+    const sel = getSelectedFilters();
+    currentData = masterData.filter(r=>{
+      return filterKeys.every(k=>!sel[k].length||sel[k].includes(r[k]||''));
+    });
+    applySorting();
+    createFilterSummary(sel, currentData.length);
+  }
+
+  function applySorting(){
+    if (currentSort.key) {
+      currentData.sort((a,b)=>{
+        const A=(a[currentSort.key]||'').toUpperCase();
+        const B=(b[currentSort.key]||'').toUpperCase();
+        return currentSort.direction==='asc'?A.localeCompare(B):B.localeCompare(A);
+      });
+    }
+    document.getElementById('results').innerHTML = createResultsTable(currentData);
+  }
+
+  function sortTable(key){
+    currentSort = currentSort.key===key
+      ? {key, direction:currentSort.direction==='asc'?'desc':'asc'}
+      : {key, direction:'asc'};
+    applySorting();
+  }
+
+  function createFilterSummary(filters, count) {
+    let html = `<table><thead><tr><th>Filter</th><th>Selected</th></tr></thead><tbody>`;
+    for (const k in filters) {
+      html += `<tr><td>${k}</td><td>${filters[k].length?filters[k].join(', '):'All'}</td></tr>`;
+    }
+    html += `<tr><td colspan="2" style="text-align:center;font-weight:bold">${count} record(s) found.</td></tr>`;
+    html += `</tbody></table>`;
+    document.getElementById('filterSummary').innerHTML = html;
+  }
+
+  function showFilterSummary(){
+    document.getElementById('filterSummaryPopup').style.display = 'block';
+  }
+
+  function resetFilters(){
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb=>cb.checked=false);
+    document.getElementById('searchBox').value='';
+    currentSort = {key:'', direction:'asc'};
+    currentData = [...masterData];
+    applySorting();
+  }
+
+  function createResultsTable(data){
+    const cols = ['sl','Department','Judicial District','Revenue District','Name of the Court','Designation','Status of the post','Name of the Officer','Panel Status','Appointed During','actions'];
+    let html = '<table><thead><tr>';
+    cols.forEach(c=>{
+      const lbl = c==='sl'?'Sl. No':c==='actions'?'Actions':c;
+      const click = (c!=='sl'&&c!=='actions') ? `onclick="sortTable('${c}')"` : '';
+      const arrow = currentSort.key===c ? (currentSort.direction==='asc'?' ▲':' ▼') : '';
+      html += `<th ${click}>${lbl}${arrow}</th>`;
+    });
+    html += '</tr></thead><tbody>';
+    data.forEach((r,i)=>{
+      html += '<tr>';
+      html += `<td>${i+1}</td>`;
+      ['Department','Judicial District','Revenue District','Name of the Court','Designation','Status of the post','Name of the Officer','Panel Status','Appointed During']
+        .forEach(f=> html += `<td>${r[f]||''}</td>`);
+      html += `<td>
+        <button class="view" onclick="viewData(${i})">🔍View</button>
+        <button class="edit" onclick="editData(${i})">✏️Edit</button>
+        <button class="delete" onclick="deleteData(${i})">🗑️Delete</button>
+      </td>`;
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    return html;
+  }
+
+  function searchTable(){
+    const t = document.getElementById('searchBox').value.toLowerCase();
+    currentData = masterData.filter(r=> Object.values(r).some(v=>String(v).toLowerCase().includes(t)));
+    applySorting();
+  }
+
+  function viewData(i){
+    const r = currentData[i];
+    let html = '<table>';
+    for (const k in r) {
+      html += `<tr><th>${k}</th><td>${r[k]||'-'}</td></tr>`;
+    }
+    html += '</table>';
+    document.getElementById('modalBody').innerHTML = html;
+    document.getElementById('viewModal').style.display = 'block';
+  }
+
+  function closeModal(){ document.getElementById('viewModal').style.display = 'none'; }
+   
+  
+  if(!localStorage.getItem('userId')) window.location.href='index.html';
+  init();
+</script>
+</body>
+</html>

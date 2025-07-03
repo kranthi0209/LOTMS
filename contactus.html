@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Contact Our Team</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+
+    body {
+      background: linear-gradient(to bottom right, #f1faee, #e8f0f2);
+      animation: fadeIn 1s ease-in;
+      padding: 40px 20px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    h1.contact-heading {
+      color: #0a0633;
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 40px;
+      animation: fadeSlide 1s ease-out;
+    }
+
+    @keyframes fadeSlide {
+      0% { opacity: 0; transform: translateY(-20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .team-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .contact-tile {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 30px;
+      width: 400px;
+      color: #050505;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      animation: fadeUp 1s ease forwards;
+      transform: translateY(30px);
+      opacity: 0;
+    }
+
+    .contact-tile:nth-child(1) { animation-delay: 0.3s; }
+    .contact-tile:nth-child(2) { animation-delay: 0.5s; }
+    .contact-tile:nth-child(3) { animation-delay: 0.7s; }
+
+    @keyframes fadeUp {
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .contact-tile:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .contact-tile h2 {
+      font-size: 1.6rem;
+      margin-bottom: 6px;
+      color: #140404;
+    }
+
+    .contact-tile .title {
+      font-size: 0.95rem;
+      color: #18166b;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .info {
+      display: flex;
+      align-items: center;
+      margin: 12px 0;
+      font-size: 0.95rem;
+    }
+
+    .info i {
+      margin-right: 12px;
+      font-size: 1.1rem;
+      color: #5c0c13;
+      background: rgba(255,255,255,0.2);
+      padding: 6px;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .info span {
+      color: #0a0633;
+      word-break: break-word;
+    }
+
+    .tile-footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #500b47;
+      opacity: 0.85;
+    }
+
+    @media (max-width: 960px) {
+      h1.contact-heading {
+        font-size: 2rem;
+      }
+      .contact-tile {
+        width: 90%;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+  <script src="shared-header.js"></script>
+  <h1 class="contact-heading"></h1>
+  <h1 class="contact-heading">Contact Us</h1>
+
+  <div class="team-container">
+    <!-- Tile 1 -->
+    <div class="contact-tile">
+      <h2>Srinivasan.D</h2>
+      <div class="title">OSD to Principal Secretary to HCM</div>
+      <div class="info"><i class="fas fa-phone-alt"></i><span>+91 83749 19895</span></div>
+      <div class="info"><i class="fas fa-envelope"></i><span>kranthikumar.p86@ap.gov.in</span></div>
+      <div class="info"><i class="fas fa-map-marker-alt"></i><span>IGC,Velagapudi,Amaravathi</span></div>
+      
+    </div>
+
+    <!-- Tile 2 -->
+    <div class="contact-tile">
+      <h2>Kranthi.p</h2>
+      <div class="title">PS to Principal Secretary to HCM</div>
+      <div class="info"><i class="fas fa-phone-alt"></i><span>+91 99591 81947</span></div>
+      <div class="info"><i class="fas fa-envelope"></i><span>kranthikumar.p86@ap.gov.in</span></div>
+      <div class="info"><i class="fas fa-map-marker-alt"></i><span>IGC,Velagapudi,Amaravathi</span></div>
+      
+    </div>
+
+    <!-- Tile 3 -->
+    <div class="contact-tile">
+      <h2>Wilson.G</h2>
+      <div class="title">PA to Principal Secretary to HCM</div>
+      <div class="info"><i class="fas fa-phone-alt"></i><span>+91 97702 45179</span></div>
+      <div class="info"><i class="fas fa-envelope"></i><span>kranthikumar.p86@ap.gov.in</span></div>
+      <div class="info"><i class="fas fa-map-marker-alt"></i><span>IGC,Velagapudi,Amaravathi</span></div>
+      
+    </div>
+  </div>
+<script>if (!localStorage.getItem("userId")) {
+    window.location.href = "index.html";
+  }</script>
+</body>
+</html>

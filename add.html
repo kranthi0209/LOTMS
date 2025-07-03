@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Maintain Master Data</title>
+ <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #f1f7fc, #dff1ff);
+      padding: 20px 40px;
+      color: #2c3e50;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      color: #003049;
+      margin-bottom: 25px;
+    }
+
+    .toggle-button {
+      text-align: right;
+      margin-bottom: 15px;
+    }
+
+    .toggle-button button {
+      background-color: #816e19;
+      color: rgb(10, 10, 10);
+      padding: 10px 18px;
+      font-size: 0.95rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .toggle-button button:hover {
+      background-color: #4ca19a;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      width: 50%;
+      margin-left: auto;
+      margin-right: auto;
+      
+    }
+
+    .form-section {
+      border: 1px solid #bcd;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #f7f4cb;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+    }
+
+    .section-header {
+      font-weight: bold;
+      padding: 14px 20px;
+      background: #125d80;
+      color: white;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.3s;
+    }
+
+    .section-header:hover {
+      background: #dadfe2;color: rgb(27, 26, 26);
+    }
+
+    .section-body {
+      padding: 18px 20px;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .section-body.show {
+      display: block;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      font-size: 0.95rem;
+      margin: 12px 0 6px;
+    }
+
+    select, input[type="text"], input[type="date"], textarea {
+      width: 98%;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+      border-radius: 6px;
+      border: 1px solid #bbb;
+      background: #fefefe;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+     
+    }
+
+    button[type="button"].submit {
+      margin-top: 25px;
+      background: linear-gradient(to right, #dd7886, #3f8fda);
+      color: #002b36;
+      padding: 14px 20px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    button[type="button"].submit:hover {
+      background: linear-gradient(to right, #0b972e, #bbb8b6,);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .modal-box {
+      background: #ffffff;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.25);
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    .loader {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #2a9d8f;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+  </style>
+</head>
+<body>
+<script src="shared-header.js"></script>
+
+<h1 >🎯 Add Appointment Details of a new Court's Law Officer</h1>
+<h6 style="color:rgb(82, 38, 38); text-align: center;">[Use this only if any court details are missing in the data. if you want to modify the existing data use the <strong>Update Court details</strong> Tile for this purpose]</h6>
+<div class="toggle-button">
+  <button onclick="toggleAllSections()" id="toggleBtn">Expand All Sections ⬇️</button>
+</div>
+
+<form id="masterForm">
+  <!-- Section Template -->
+  <div class="form-section">
+    <div class="section-header" onclick="toggleSection(this)">📍 Location Details</div>
+    <div class="section-body">
+      <label>Department</label>
+      <select id="department">
+        <option value="">-- Select --</option>
+        <option>Law Dept</option>
+        <option>Home Dept</option>
+        <option>High Court</option>
+      </select>
+
+      <label>Judicial District</label>
+      <select id="judicial"><option value="">-- Select --</option></select>
+
+      <label>Revenue District</label>
+      <select id="revenue"><option value="">-- Select --</option></select>
+
+      <label>Town/City</label>
+      <select id="town"><option value="">-- Select --</option></select>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="section-header" onclick="toggleSection(this)">⚖️ Court Details</div>
+    <div class="section-body">
+      <label>Name of the Court</label>
+      <textarea id="court" maxlength="1000"></textarea>
+
+      <label>Organisation</label>
+      <input type="text" id="organisation" maxlength="200" />
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="section-header" onclick="toggleSection(this)">📌 Post Details</div>
+    <div class="section-body">
+      <label>Designation</label>
+      <select id="designation">
+        <option value="">-- Select --</option>
+        <option>Additional Govt Pleader</option>
+        <option>Additional Public Prosecutor</option>
+        <option>Govt Pleader</option>
+        <option>Public Prosecutor</option>
+        <option>Special Additional Govt Pleader</option>
+        <option>Special Counsel</option>
+        <option>Special Govt Pleader</option>
+        <option>Special Public Prosecutor</option>
+      </select>
+
+      <label>Post</label>
+      <select id="post">
+        <option value="">-- Select --</option>
+        <option>A.G.P.</option>
+        <option>A.P.P.</option>
+        <option>G.P.</option>
+        <option>P.P.</option>
+        <option>Special Counsel</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="section-header" onclick="toggleSection(this)">📊 Status</div>
+    <div class="section-body">
+      <label>Status of the post</label>
+      <select id="status">
+        <option value="">-- Select --</option>
+        <option>Filled</option>
+        <option>Vacant</option>
+      </select>
+
+      <label>Panel Status</label>
+      <select id="panel">
+        <option value="">-- Select --</option>
+        <option>Not Applicable</option>
+        <option>Panel Awaited</option>
+        <option>Panel Received</option>
+        <option>No Need to fill</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="section-header" onclick="toggleSection(this)">🧑 Officer Details</div>
+    <div class="section-body">
+      <label>Name of the Officer</label>
+      <input type="text" id="officer" />
+
+      <label>Community</label>
+      <select id="community">
+        <option value="">-- Select --</option>
+        <option>OC</option>
+        <option>BC</option>
+        <option>SC</option>
+        <option>ST</option>
+        <option>No Data</option>
+        <option>Not Applicable</option>
+      </select>
+
+      <label>Caste</label>
+      <input type="text" id="caste" />
+
+      <label>Gender</label>
+      <select id="gender">
+        <option value="">-- Select --</option>
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
+        <option>Not Disclosed</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="section-header" onclick="toggleSection(this)">📅 Appointment Details</div>
+    <div class="section-body">
+      <label>e-Office File No</label>
+      <input type="text" id="efile" />
+
+      <label>File Approved Date</label>
+      <input type="date" id="filedate" />
+
+      <label>Govt Order No</label>
+      <input type="text" id="gono" />
+
+      <label>Govt Order Date</label>
+      <input type="date" id="godate" />
+
+      <label>Date of completion of Tenure</label>
+      <input type="date" id="tenure" />
+
+      <label>Appointed During</label>
+      <select id="appointed">
+        <option value="">-- Select --</option>
+        <option>YCP Govt</option>
+        <option>TDP Govt</option>
+        <option>Not Applicable</option>
+      </select>
+
+      <label>Remarks</label>
+      <textarea id="remarks" rows="3"></textarea>
+    </div>
+  </div>
+
+  <button type="button" class="submit" onclick="submitMaster()">📤 Submit Master Data</button>
+</form>
+
+<!-- Modal Popup -->
+<div class="modal-overlay" id="statusModal">
+  <div class="modal-box">
+    <div class="loader" id="modalLoader"></div>
+    <div id="modalMessage">Your details are being saved. Please wait...</div>
+  </div>
+</div>
+
+<script>
+const API = "https://script.google.com/macros/s/AKfycbw3N16fEIfRR3inDY7pglleoCNVGyTMuKDzNftUe5_Vbi1xdsoBmF9b3K5p8ccdqrzapw/exec";
+let locations = [];
+
+async function init() {
+  const res = await fetch(`${API}?action=getLocations`);
+  locations = await res.json();
+  const judicials = [...new Set(locations.map(l => l.judicial))].sort();
+  document.getElementById('judicial').innerHTML =
+    `<option value="">-- Select --</option>` + judicials.map(j => `<option>${j}</option>`).join('');
+  document.getElementById('judicial').onchange = fillRevenue;
+  document.getElementById('revenue').onchange = fillTowns;
+  fillRevenue();
+}
+
+function fillRevenue() {
+  const j = document.getElementById('judicial').value;
+  const revs = [...new Set(locations.filter(l => l.judicial === j).map(l => l.revenue))].sort();
+  document.getElementById('revenue').innerHTML =
+    `<option value="">-- Select --</option>` + revs.map(r => `<option>${r}</option>`).join('');
+  fillTowns();
+}
+
+function fillTowns() {
+  const j = document.getElementById('judicial').value;
+  const r = document.getElementById('revenue').value;
+  const towns = [...new Set(locations.filter(l => l.judicial === j && l.revenue === r).map(l => l.town))].sort();
+  document.getElementById('town').innerHTML =
+    `<option value="">-- Select --</option>` + towns.map(t => `<option>${t}</option>`).join('');
+}
+
+function toggleSection(header) {
+  const body = header.nextElementSibling;
+  body.classList.toggle("show");
+}
+
+function toggleAllSections() {
+  const bodies = document.querySelectorAll(".section-body");
+  const btn = document.getElementById("toggleBtn");
+  const expanding = btn.textContent.includes("Expand");
+  bodies.forEach(b => {
+    b.classList.toggle("show", expanding);
+  });
+  btn.textContent = expanding ? "Collapse All Sections ⬆️" : "Expand All Sections ⬇️";
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".section-body").forEach(b => b.classList.remove("show"));
+});
+
+function showModal(message, loading) {
+  document.getElementById("statusModal").style.display = "flex";
+  document.getElementById("modalMessage").textContent = message;
+  document.getElementById("modalLoader").style.display = loading ? "block" : "none";
+}
+
+function hideModal() {
+  document.getElementById("statusModal").style.display = "none";
+}
+
+function submitMaster() {
+  const fields = {
+    "Department": "department",
+    "Judicial District": "judicial",
+    "Revenue District": "revenue",
+    "Town/City": "town",
+    "Name of the Court": "court",
+    "Organisation": "organisation",
+    "Designation": "designation",
+    "Post": "post",
+    "Status of the post": "status",
+    "Panel Status": "panel",
+    "Name of the Officer": "officer",
+    "Community": "community",
+    "Caste": "caste",
+    "Gender": "gender",
+    "e-Office File No": "efile",
+    "File Approved Date": "filedate",
+    "Govt Order No": "gono",
+    "Govt Order Date": "godate",
+    "Date of completion of Tenure": "tenure",
+    "Appointed During": "appointed",
+    "Remarks": "remarks"
+  };
+
+  const payload = {};
+  for (const [label, id] of Object.entries(fields)) {
+    const el = document.getElementById(id);
+    if (!el.value) {
+      alert(`Please fill out: ${label}`);
+      el.focus();
+      return;
+    }
+    payload[label] = el.value;
+  }
+
+  showModal("Data is Saving. Please wait...", true);
+
+  fetch(`${API}?action=saveMasterData`, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      showModal("✅ Your data is saved successfully!", false);
+      document.getElementById('masterForm').reset();
+      setTimeout(hideModal, 2500);
+    } else {
+      showModal("❌ Failed to save data. " + data.error, false);
+      setTimeout(hideModal, 3000);
+    }
+  })
+  .catch(err => {
+    showModal("❌ Error saving your data. Please try again.", false);
+    console.error(err);
+    setTimeout(hideModal, 3000);
+  });
+}
+
+init();
+if (!localStorage.getItem("userId")) {
+    window.location.href = "index.html";
+  }
+</script>
+</body>
+</html>

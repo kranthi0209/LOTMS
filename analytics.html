@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Analytics & Reports</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 30px;
+      background: linear-gradient(to right, #dbeafe, #fef3c7);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 36px;
+      color: #1a202c;
+      margin-bottom: 40px;
+    }
+
+    .tiles {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      position: relative;
+      background: linear-gradient(135deg, #ffffff, #f1f5f9);
+      border-radius: 20px;
+      padding: 30px 20px 25px;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      animation: fadeInUp 0.6s ease forwards;
+      transform: translateY(20px);
+      opacity: 0;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+      transition: transform 0.3s ease;
+    }
+
+    .icon-banner {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 30px;
+      color: #4a5568;
+      opacity: 0.3;
+    }
+
+    .title {
+      margin-bottom: 14px;
+    }
+
+    .main-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #2c5282;
+      line-height: 1.2;
+    }
+
+    .sub-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: #718096;
+      margin-top: 4px;
+    }
+
+    .count {
+      font-size: 52px;
+      font-weight: 900;
+      color: #1a202c;
+      margin-bottom: 18px;
+      animation: pulse 1.2s ease infinite;
+    }
+
+    .meta-group {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+    }
+
+    .meta-item {
+      text-align: center;
+    }
+
+    .label {
+      display: inline-block;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      padding: 2px 10px;
+      border-radius: 12px;
+      margin-bottom: 4px;
+    }
+
+    .law {
+      background: #2b6cb0;
+    }
+
+    .home {
+      background: #e53e3e;
+    }
+
+    .value {
+      font-size: 22px;
+      font-weight: bold;
+      color: #2d3748;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    .card:nth-child(1) { background: linear-gradient(135deg, #f0fff4, #c6f6d5); }
+    .card:nth-child(2) { background: linear-gradient(135deg, #fff5f5, #fed7d7); }
+    .card:nth-child(3) { background: linear-gradient(135deg, #fefcbf, #faf089); }
+    .card:nth-child(4) { background: linear-gradient(135deg, #ebf8ff, #bee3f8); }
+    .card:nth-child(5) { background: linear-gradient(135deg, #ede9fe, #c4b5fd); }
+
+    .charts-rowA {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 20px;
+  padding: 30px 0;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.charts-rowA canvas {
+  flex: 1;
+  min-width: 22%;
+  max-width: 25%;
+  height: auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.charts-rowB {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 20px;
+  padding: 30px 0;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.charts-rowB canvas {
+  flex: 1;
+  min-width: 22%;
+  max-width: 25%;
+  height: auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+  </style>
+</head>
+<body>
+<script src="shared-header.js"></script>
+<h1>Analytics & Reports</h1>
+
+<div class="tiles">
+  <div class="card">
+    <div class="icon-banner"><i data-lucide="layers"></i></div>
+    <div class="title"><div class="main-title">Total Tenure Posts</div><div class="sub-title">All sanctioned positions</div></div>
+    <div class="count" id="totalPosts">0</div>
+    <div class="meta-group">
+      <div class="meta-item"><div class="label law">Law</div><div class="value" id="lawPosts">0</div></div>
+      <div class="meta-item"><div class="label home">Home</div><div class="value" id="homePosts">0</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="icon-banner"><i data-lucide="alert-circle"></i></div>
+    <div class="title"><div class="main-title">Vacant Posts</div><div class="sub-title">Posts yet to be filled</div></div>
+    <div class="count" id="vacantTotal">0</div>
+    <div class="meta-group">
+      <div class="meta-item"><div class="label law">Law</div><div class="value" id="vacantLaw">0</div></div>
+      <div class="meta-item"><div class="label home">Home</div><div class="value" id="vacantHome">0</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="icon-banner"><i data-lucide="bike"></i></div>
+    <div class="title"><div class="main-title">NDA Appointees</div><div class="sub-title">Appointed after 12th June '24</div></div>
+    <div class="count" id="ndaFilledTotal">0</div>
+    <div class="meta-group">
+      <div class="meta-item"><div class="label law">Law</div><div class="value" id="ndaLaw">0</div></div>
+      <div class="meta-item"><div class="label home">Home</div><div class="value" id="ndaHome">0</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="icon-banner"><i data-lucide="fan"></i></div>
+    <div class="title"><div class="main-title">YCP Appointees</div><div class="sub-title">Still working without resignation</div></div>
+    <div class="count" id="ycpFilledTotal">0</div>
+    <div class="meta-group">
+      <div class="meta-item"><div class="label law">Law</div><div class="value" id="ycpLaw">0</div></div>
+      <div class="meta-item"><div class="label home">Home</div><div class="value" id="ycpHome">0</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="icon-banner"><i data-lucide="file-check-2"></i></div>
+    <div class="title"><div class="main-title">Panel Received</div><div class="sub-title">Received from Districts and file under process</div></div>
+    <div class="count" id="panelReceivedTotal">0</div>
+    <div class="meta-group">
+      <div class="meta-item"><div class="label law">Law</div><div class="value" id="panelReceivedLaw">0</div></div>
+      <div class="meta-item"><div class="label home">Home</div><div class="value" id="panelReceivedHome">0</div></div>
+    </div>
+  </div>
+</div>
+
+<h1 style="margin-top: 40px; text-align: center;background-color: #25b12c;">Law Department - Graphs</h1>
+<div class="charts-rowA">
+  <canvas id="lawPieChart" width="400" height="400"></canvas>
+  <canvas id="lawBarChart" width="400" height="400"></canvas>
+  <canvas id="lawDoughnutChart" width="400" height="400"></canvas>
+  <canvas id="lawVacancyTimelineBarChart" width="400" height="400"></canvas>
+</div>
+
+<h1 style="margin-top: 40px;text-align: center;background-color: #25b12c;">Home Department - Graphs</h1>
+<div class="charts-rowB">
+  <canvas id="homePieChart" width="400" height="400"></canvas>
+  <canvas id="homeBarChart" width="400" height="400"></canvas>
+  <canvas id="homeDoughnutChart" width="400" height="400"></canvas>
+  <canvas id="homeVacancyTimelineBarChart" width="400" height="400"></canvas>
+</div>
+
+
+<script>
+  lucide.createIcons();
+  const DATA_URL = 'https://script.google.com/macros/s/AKfycbz51CIqm8R34YK4mZNKgbkBKS16Zq9WwidrJ68K_cOfR46yHYSVn-89-5mknu9K_teY/exec';
+  const update = (id, value) => document.getElementById(id).innerText = value;
+
+  fetch(DATA_URL).then(res => res.json()).then(data => {
+    const byDept = (list, dept) => list.filter(d => d.Department?.toLowerCase().includes(dept));
+    const get = (cond) => data.filter(cond);
+
+    const lawData = byDept(data, 'law');
+    const homeData = byDept(data, 'home');
+
+    update("lawPosts", lawData.length);
+    update("homePosts", homeData.length);
+    update("totalPosts", lawData.length + homeData.length);
+
+    const ycp = get(d => d["Status of the post"] === "Filled" && d["Appointed During"]?.toLowerCase().includes("ycp"));
+    update("ycpFilledTotal", ycp.length);
+    update("ycpLaw", byDept(ycp, 'law').length);
+    update("ycpHome", byDept(ycp, 'home').length);
+
+    const vacant = get(d => d["Status of the post"] === "Vacant");
+    update("vacantTotal", vacant.length);
+    update("vacantLaw", byDept(vacant, 'law').length);
+    update("vacantHome", byDept(vacant, 'home').length);
+
+    const nda = get(d => d["Status of the post"] === "Filled" && d["Appointed During"]?.toLowerCase().includes("nda"));
+    update("ndaFilledTotal", nda.length);
+    update("ndaLaw", byDept(nda, 'law').length);
+    update("ndaHome", byDept(nda, 'home').length);
+
+    const panel = get(d => d["Panel Status"] === "Panel Received");
+    update("panelReceivedTotal", panel.length);
+    update("panelReceivedLaw", byDept(panel, 'law').length);
+    update("panelReceivedHome", byDept(panel, 'home').length);
+
+    const now = new Date();
+
+    // ======================= LAW DEPARTMENT ==========================
+    const lawStatusCount = { Filled: 0, Vacant: 0 };
+    lawData.forEach(d => { if (lawStatusCount[d["Status of the post"]] !== undefined) lawStatusCount[d["Status of the post"]]++; });
+
+    new Chart(document.getElementById('lawPieChart'), {
+      type: 'pie',
+      data: {
+        labels: Object.keys(lawStatusCount),
+        datasets: [{
+          data: Object.values(lawStatusCount),
+          backgroundColor: ['#4ade80', '#f87171']
+        }]
+      },
+      options: {
+        responsive: false,
+        plugins: {
+          title: { display: true, text: 'Status of Posts' },
+          tooltip: {
+            callbacks: {
+              label: function (ctx) {
+                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                const val = ctx.raw;
+                const pct = ((val / total) * 100).toFixed(1);
+                return `${ctx.label}: ${val} (${pct}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+
+    const lawPosts = [...new Set(lawData.map(d => d.Post))];
+    const lawGroups = [...new Set(lawData.map(d => d["Appointed During"]))].filter(Boolean);
+    const lawBarData = lawGroups.map(govt => ({
+      label: govt,
+      data: lawPosts.map(post => lawData.filter(d => d.Post === post && d["Appointed During"] === govt).length),
+      backgroundColor: govt === "YCP Govt" ? '#fbbf24' : govt === "NDA Govt" ? '#60a5fa' : '#cbd5e0'
+    }));
+
+    new Chart(document.getElementById('lawBarChart'), {
+      type: 'bar',
+      data: { labels: lawPosts, datasets: lawBarData },
+      options: {
+        responsive: false,
+        plugins: { title: { display: true, text: 'Working Officers Appointed by' } },
+        scales: { x: { stacked: true }, y: { stacked: true } }
+      }
+    });
+
+    const ndaLaw = byDept(nda, 'law');
+    const lawCommunities = [...new Set(ndaLaw.map(d => d.Community))].filter(Boolean);
+    const lawCommData = lawCommunities.map(c => ndaLaw.filter(d => d.Community === c).length);
+
+    new Chart(document.getElementById('lawDoughnutChart'), {
+      type: 'doughnut',
+      data: {
+        labels: lawCommunities,
+        datasets: [{ data: lawCommData, backgroundColor: ['#60a5fa', '#fbbf24', '#34d399', '#a78bfa'] }]
+      },
+      options: {
+        responsive: false,
+        plugins: {
+          title: { display: true, text: 'Community-wise NDA Appointees' },
+          tooltip: {
+            callbacks: {
+              label: function (ctx) {
+                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                const val = ctx.raw;
+                const pct = ((val / total) * 100).toFixed(1);
+                return `${ctx.label}: ${val} (${pct}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+
+    const lawTimeline = [0, 0, 0, 0];
+    byDept(ycp, 'law').forEach(d => {
+      const dtStr = d["Date of completion of Tenure"];
+      if (!dtStr || dtStr === "Not Applicable") return;
+      const dt = new Date(dtStr.split("-").reverse().join("-"));
+      const diffMonths = (dt - now) / (1000 * 60 * 60 * 24 * 30);
+      if (diffMonths <= 3) lawTimeline[0]++;
+      else if (diffMonths <= 6) lawTimeline[1]++;
+      else if (diffMonths <= 12) lawTimeline[2]++;
+      else lawTimeline[3]++;
+    });
+
+    new Chart(document.getElementById('lawVacancyTimelineBarChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Next 3 Months', '3–6 Months', '6M–1Y', '> 1Y'],
+        datasets: [{ label: 'Vacancies (YCP)', data: lawTimeline, backgroundColor: '#f87171' }]
+      },
+      options: {
+        responsive: false,
+        plugins: { title: { display: true, text: 'Upcoming Vacancies' } }
+      }
+    });
+
+    // ======================= HOME DEPARTMENT ==========================
+    const homeStatusCount = { Filled: 0, Vacant: 0 };
+    homeData.forEach(d => { if (homeStatusCount[d["Status of the post"]] !== undefined) homeStatusCount[d["Status of the post"]]++; });
+
+    new Chart(document.getElementById('homePieChart'), {
+      type: 'pie',
+      data: {
+        labels: Object.keys(homeStatusCount),
+        datasets: [{
+          data: Object.values(homeStatusCount),
+          backgroundColor: ['#4ade80', '#f87171']
+        }]
+      },
+      options: {
+        responsive: false,
+        plugins: {
+          title: { display: true, text: 'Status of Posts' },
+          tooltip: {
+            callbacks: {
+              label: function (ctx) {
+                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                const val = ctx.raw;
+                const pct = ((val / total) * 100).toFixed(1);
+                return `${ctx.label}: ${val} (${pct}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+
+    const homePosts = [...new Set(homeData.map(d => d.Post))];
+    const homeGroups = [...new Set(homeData.map(d => d["Appointed During"]))].filter(Boolean);
+    const homeBarData = homeGroups.map(govt => ({
+      label: govt,
+      data: homePosts.map(post => homeData.filter(d => d.Post === post && d["Appointed During"] === govt).length),
+      backgroundColor: govt === "YCP Govt" ? '#fbbf24' : govt === "NDA Govt" ? '#60a5fa' : '#cbd5e0'
+    }));
+
+    new Chart(document.getElementById('homeBarChart'), {
+      type: 'bar',
+      data: { labels: homePosts, datasets: homeBarData },
+      options: {
+        responsive: false,
+        plugins: { title: { display: true, text: 'Working Officers Appointed by' } },
+        scales: { x: { stacked: true }, y: { stacked: true } }
+      }
+    });
+
+    const ndaHome = byDept(nda, 'home');
+    const homeCommunities = [...new Set(ndaHome.map(d => d.Community))].filter(Boolean);
+    const homeCommData = homeCommunities.map(c => ndaHome.filter(d => d.Community === c).length);
+
+    new Chart(document.getElementById('homeDoughnutChart'), {
+      type: 'doughnut',
+      data: {
+        labels: homeCommunities,
+        datasets: [{ data: homeCommData, backgroundColor: ['#60a5fa', '#fbbf24', '#34d399', '#a78bfa'] }]
+      },
+      options: {
+        responsive: false,
+        plugins: {
+          title: { display: true, text: 'Community-wise NDA Appointees' },
+          tooltip: {
+            callbacks: {
+              label: function (ctx) {
+                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                const val = ctx.raw;
+                const pct = ((val / total) * 100).toFixed(1);
+                return `${ctx.label}: ${val} (${pct}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+
+    const homeTimeline = [0, 0, 0, 0];
+    byDept(ycp, 'home').forEach(d => {
+      const dtStr = d["Date of completion of Tenure"];
+      if (!dtStr || dtStr === "Not Applicable") return;
+      const dt = new Date(dtStr.split("-").reverse().join("-"));
+      const diffMonths = (dt - now) / (1000 * 60 * 60 * 24 * 30);
+      if (diffMonths <= 3) homeTimeline[0]++;
+      else if (diffMonths <= 6) homeTimeline[1]++;
+      else if (diffMonths <= 12) homeTimeline[2]++;
+      else homeTimeline[3]++;
+    });
+
+    new Chart(document.getElementById('homeVacancyTimelineBarChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Next 3 Months', '3–6 Months', '6M–1Y', '> 1Y'],
+        datasets: [{ label: 'Vacancies (YCP)', data: homeTimeline, backgroundColor: '#f87171' }]
+      },
+      options: {
+        responsive: false,
+        plugins: { title: { display: true, text: 'Upcoming Vacancies' } }
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
