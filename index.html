@@ -38,6 +38,73 @@
     }
     button:hover { background-color: #457b9d; }
     #login-error { color: red; font-size: 0.9rem; }
+
+    /* Floating Chatbot Widget */
+    #chatbotWidget {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 9999;
+      font-family: 'Inter', sans-serif;
+    }
+
+    #chatIcon {
+      width: 80px;
+      height: 80px;
+      background-color: transparent;
+      border-radius: 50%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+      animation: heartbeat 2s infinite;
+    }
+
+    #chatIcon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #chatWindow {
+      display: none;
+      position: absolute;
+      bottom: 80px;
+      right: 0;
+      width: 300px;
+      height: 380px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+
+    .chat-header {
+      background-color: #0f172a;
+      color: white;
+      padding: 15px;
+      font-weight: 600;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .chat-body {
+      padding: 15px;
+      height: 315px;
+      overflow-y: auto;
+      font-size: 14px;
+      color: #1e293b;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.08); }
+      50% { transform: scale(0.96); }
+      75% { transform: scale(1.05); }
+    }
   </style>
 </head>
 <body>
@@ -54,7 +121,18 @@
       <div id="login-error"></div>
     </form>
   </div>
-
+<!-- Floating Chatbot Widget -->
+  <div id="chatbotWidget">
+    <div id="chatIcon" onclick="toggleChat()">
+      <img src="chatbot.png" alt="Chatbot Icon" />
+    </div>
+    <div id="chatWindow">
+      <div class="chat-header">AI Assistant</div>
+      <div class="chat-body">
+        <p>Hello! How can I assist you today?</p>
+      </div>
+    </div>
+  </div>
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbw53fhKskGrqgkeVNwk6CwkRDTpY0yZA9jdGoSjDFu5KCluN_LZxbn5DU2cpcrOLVbFJg/exec"; // Replace with your URL
 
